@@ -31,14 +31,14 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 30
+            initialDelaySeconds: 60
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 30
+            initialDelaySeconds: 60
+            periodSeconds: 60
           envFrom: # Referencing the rmq credentials
           - secretRef:
               name: rmq-credentials
