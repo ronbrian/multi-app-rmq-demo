@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-publisher-deployment
+  labels:
+    app: java-publisher
+    project: myproject
+spec:
+  replicas: 2
+  strategy: # Ensure no downtime / unavailable pod during update
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: java-publisher
+      project: myproject
+  template:
+    metadata:
+      labels:
+        app: java-publisher
+        project: myproject
+    spec:
+      containers:
+        - name: java-publisher
+          image: ronbrian/java-publisher
+          ports:
+            - containerPort: 8080 # The Spring boot app is using port 8080
+          livenessProbe:  # Liveness & Readiness for ensuring the container is healthy
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          envFrom: # Referencing the rmq credentials
+          - secretRef:
+              name: rmq-credentials
+
