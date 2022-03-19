@@ -1,0 +1,21 @@
+apiVersion: keda.k8s.io/v1alpha1
+kind: ScaledObject
+metadata:
+  name: subscriber-hpa
+  labels:
+    app: java-subscriber
+    project: myproject
+spec:
+  scaleTargetRef:
+    deploymentName: java-subscriber-deployment
+  minReplicaCount: 2
+  maxReplicaCount: 5
+  pollingInterval: 30
+  cooldownPeriod: 300
+  triggers:
+    - type: rabbitmq
+      metadata:
+        # host is base64 string of amqp://ron:pass@47.88.35.45:5672/virtualhost
+        host: YW1xcDovL3JvbjpwYXNzQDQ3Ljg4LjM1LjQ1OjU2NzIvdmlydHVhbGhvc3Q=
+        queueName: InterviewQueue
+        queueLength: 50
